@@ -7,18 +7,29 @@ export default function App() {
   const send = async () => {
     if (!msg.trim()) return;
 
-    const response = await fetch("http://localhost:5000/ask", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ question: msg }),
-    });
+    try {
+      const response = await fetch("https://cognitia-ai-chat.onrender.com/ask", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ question: msg }),
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    setChat([...chat, { question: msg, answer: data.answer }]);
-    setMsg("");
+      setChat((prev) => [
+        ...prev,
+        { question: msg, answer: data.answer }
+      ]);
+
+      setMsg("");
+    } catch (error) {
+      setChat((prev) => [
+        ...prev,
+        { question: msg, answer: "Error connecting to server" }
+      ]);
+    }
   };
 
   const clearChat = () => {
